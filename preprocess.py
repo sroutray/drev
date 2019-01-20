@@ -42,22 +42,22 @@ def compute_STFT(wavfile_list, num_train=3700, fs=16000, wlen_sec=0.032,
 
     fs_orig = librosa.load(wavfile_list[0], sr=None)[1] # Get sampling rate
 
-    data = [None] * len(num_train) # Create an empty list that will contain dictionaries
+    data = [None] * num_train # Create an empty list that will contain dictionaries
 
     for idx in range(0, num_train):
 
-        path, file_name = os.path.split(wavfile[idx])
+        path, file_name = os.path.split(wavfile_list[idx])
         print 'file %d/%d: %s' % (idx+1, num_train, file_name)
 
         if fs==fs_orig:
-            x = librosa.load(wavfile[idx], sr=None)[0]  # load without resampling
+            x = librosa.load(wavfile_list[idx], sr=None)[0]  # load without resampling
         else:
             print 'resampling while loading with librosa'
-            x = librosa.load(wavfile[idx], sr=fs)[0]  # load with resampling
+            x = librosa.load(wavfile_list[idx], sr=fs)[0]  # load with resampling
 
         T_orig = len(x)
         # padding for perfect reconstruction (see librosa doc)
-        x_pad = librosa,util.fix_length(x, T_orig + wlen // 2)
+        x_pad = librosa.util.fix_length(x, T_orig + wlen // 2)
         X = librosa.stft(x_pad, n_fft=nfft, hop_length=hop, win_length=wlen, window=win)  #STFT
         X_abs_2 = np.abs(X)**2  # power spectrogram
         X_angle = np.angle(X)  # phase spectogram
